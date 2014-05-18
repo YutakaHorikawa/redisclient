@@ -35,7 +35,7 @@ class AttributeRedis(object):
     def __getattr__(self, name):
         return self._get(name)
     
-    def get_keys(self):
+    def get_all_keys(self):
         return self._r.keys('*')
 
     def _get_key(self, key):
