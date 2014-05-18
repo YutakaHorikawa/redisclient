@@ -18,8 +18,11 @@ class AttributeRedis(object):
         'fuga': 2,
     }
 
-    def __init__(self, host="localhost", port=6379, db=0):
+    def __init__(self, host="localhost", port=6379, db=0, class_name=True):
         self.__dict__['_r']  = redis.Redis(host=host, port=port, db=db)
+        #keyにclass名やBASE_KEYを使用しない
+        self.__dict__['_class_name'] = class_name
+
         for k,v in self.ATTRIBUTES.items():
             tmp = self._get(k)
             ##既にkeyが存在している場合はpass
@@ -31,8 +34,15 @@ class AttributeRedis(object):
 
     def __getattr__(self, name):
         return self._get(name)
+    
+    def get_keys(self):
+        return self._r.keys('*')
 
     def _get_key(self, key):
+
+        if not self._class_name:
+            return key
+
         if self.BASE_KEY:
             key = "%s:%s:%s" % (self.BASE_KEY, self.__class__.__name__, key)
         else:
@@ -40,8 +50,12 @@ class AttributeRedis(object):
 
         return key
 
+    def get_all(self):
+        return self._r.all()
+
     def _set(self, key, value):
         key = self._get_key(key)
+        print key
         self._r.set(key, value)
 
     def _get(self, key):
@@ -49,6 +63,10 @@ class AttributeRedis(object):
         val = self._r.get(key)
         return val
 
+"""
+class Test(AttributeRedis):
+    pass
+"""
 
 if __name__ == "__main__":
     t = Test()
