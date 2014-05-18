@@ -38,9 +38,20 @@ class AttributeRedis(object):
     def get_all_keys(self):
         return self._r.keys('*')
 
-    def _get_key(self, key):
+    def get_all(self, key=False):
+        all_kesy = self.get_all_keys()
+        data = []
+        for key in all_kesy:
+            if key:
+                data.append([key, self._get(key, True)])
+            else:
+                data.append(self._get(key, True))
 
-        if not self._class_name:
+        return data
+
+    def _get_key(self, key, force_key=False):
+
+        if not self._class_name or force_key:
             return key
 
         if self.BASE_KEY:
@@ -50,12 +61,12 @@ class AttributeRedis(object):
 
         return key
 
-    def _set(self, key, value):
-        key = self._get_key(key)
+    def _set(self, key, value, force_key=False):
+        key = self._get_key(key, force_key)
         self._r.set(key, value)
 
-    def _get(self, key):
-        key = self._get_key(key)
+    def _get(self, key, force_key=False):
+        key = self._get_key(key, force_key)
         val = self._r.get(key)
         return val
 

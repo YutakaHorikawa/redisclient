@@ -33,25 +33,60 @@ class SettingsPanel(wx.Panel):
         port_number = self._port_box.GetValue()
         host_name = self._host_name_box.GetValue()
 
-        RedisData(host_name, int(port_number))
+        redis = RedisData(host_name, int(port_number), class_name=False)
+        self._parent.GetParent().redis_data_panel.generate_redis_data_grid(redis)
 
 class RedisDataGrid(wx.grid.Grid):
+
     def __init__(self, parent, id):
         wx.grid.Grid.__init__(self, parent, id, size=(1000, 500))
+        self._redis = None
+        self._data = None
+        self._last_line = 1
+
         self.CreateGrid(2,3)
         self.SetColLabelSize(0)
         self.SetRowLabelSize(0)
         self.SetCellValue(0, 0, "Key")
         self.SetCellValue(0, 1, "Data Type")
         self.SetCellValue(0, 2, "Value")
-        
+
+    def generate_redis_data_grid(self, redis):
+        self._redis = redis
+        self._data = self._redis.get_all(key=True)
+
+        for redis_data in self._data:
+            key = redis_data[0]
+            value = redis_data[1]
+            data_type = type(value).__name__
+            try:
+                self.SetCellValue(self._last_line, 0, key)
+                self.SetCellValue(self._last_line, 1, data_type)
+                self.SetCellValue(self._last_line, 2, value)
+
+            except wx._core.PyAssertionError:
+                print redis_data
+                pass
+            else:
+                self._update_last_line()
+                self.AppendRows(self._last_line)
+
+    def _update_last_line(self):
+        self._last_line += 1
+
+    def clear_data(self):
+        self.ClearGrid()
+
 class RedisDataPanel(wx.Panel):
     def __init__(self, parent, id):
         wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
         grid = wx.GridBagSizer(hgap=5, vgap=5)
-
-        grid.Add(RedisDataGrid(self, -1), pos=(0,0))
+        self._rgrid = RedisDataGrid(self, -1)
+        grid.Add(self._rgrid, pos=(0,0))
         self.SetSizerAndFit(grid)
+
+    def generate_redis_data_grid(self, redis):
+        self._rgrid.generate_redis_data_grid(redis)
 
 class Sider(wx.Frame):
     def __init__(self, parent, id, title):
