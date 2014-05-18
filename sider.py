@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from attributeredis import AttributeRedis
 import wx
+import wx.grid
+import wx.lib.gridmovers
 
 class RedisData(AttributeRedis):
     pass
@@ -31,28 +33,46 @@ class SettingsPanel(wx.Panel):
         port_number = self._port_box.GetValue()
         host_name = self._host_name_box.GetValue()
 
-        r = RedisData(host_name, int(port_number))
+        RedisData(host_name, int(port_number))
+
+class RedisDataGrid(wx.grid.Grid):
+    def __init__(self, parent, id):
+        wx.grid.Grid.__init__(self, parent, id, size=(1000, 500))
+        self.CreateGrid(2,3)
+        self.SetColLabelSize(0)
+        self.SetRowLabelSize(0)
+        self.SetCellValue(0, 0, "Key")
+        self.SetCellValue(0, 1, "Data Type")
+        self.SetCellValue(0, 2, "Value")
+        
+class RedisDataPanel(wx.Panel):
+    def __init__(self, parent, id):
+        wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
+        grid = wx.GridBagSizer(hgap=5, vgap=5)
+
+        grid.Add(RedisDataGrid(self, -1), pos=(0,0))
+        self.SetSizerAndFit(grid)
 
 class Sider(wx.Frame):
     def __init__(self, parent, id, title):
         wx.Frame.__init__(self, parent, id, title=title, style=wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN, size=(1000, 800), pos=wx.DefaultPosition)
         self._redis = None
-        
+
         panel = wx.Panel(self, -1)
         self._settings_panel = SettingsPanel(panel, -1)
-
-        #TODO 検索&データ追加用パネル
+        self.redis_data_panel = RedisDataPanel(panel, -1)
 
         layout = wx.BoxSizer(wx.VERTICAL)
         layout.Add(self._settings_panel, 1, wx.EXPAND | wx.ALL, 5)
+        layout.Add(self.redis_data_panel, 1, wx.EXPAND | wx.ALL, 5)
 
         panel.SetSizer(layout)
+
         self.Centre()
         self.Show(True)
 
     def set_redis_connection(self, redis):
         self._redis = redis
-
 
 app = wx.App()
 Sider(None, -1, 'Sider')
