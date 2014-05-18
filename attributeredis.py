@@ -50,12 +50,8 @@ class AttributeRedis(object):
 
         return key
 
-    def get_all(self):
-        return self._r.all()
-
     def _set(self, key, value):
         key = self._get_key(key)
-        print key
         self._r.set(key, value)
 
     def _get(self, key):
@@ -63,12 +59,14 @@ class AttributeRedis(object):
         val = self._r.get(key)
         return val
 
-"""
 class Test(AttributeRedis):
     pass
-"""
 
 if __name__ == "__main__":
     t = Test()
-    t.uho = "dddd"
-    print t.uho
+    t.fugafuga = [i for i in range(10)]
+    print t.fugafuga
+    t.aaaa = "1"
+    print t.aaaa
+    t.bbbb = 12
+    print t.bbbb
