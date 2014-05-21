@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 import wx
+from attributeredis import AttributeRedis
+
+class RedisData(AttributeRedis):
+    pass
 
 class SettingsPanel(wx.Panel):
     def __init__(self, parent, id):
@@ -33,6 +37,7 @@ class SettingsPanel(wx.Panel):
         host_name = self._host_name_box.GetValue()
 
         redis = RedisData(host_name, int(port_number), class_name=False)
+        #TODO 親にインスタンスを投げて、親からredisパネルに渡すようにする
         self._parent.GetParent().redis_data_panel.generate_redis_data_grid(redis)
 
     def update_lock_flag(self, value):

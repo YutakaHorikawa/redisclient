@@ -2,12 +2,8 @@
 import wx
 import wx.grid
 import wx.lib.gridmovers
-from attributeredis import AttributeRedis
 from settings_panel import SettingsPanel
 from redis_data_panel import RedisDataPanel
-
-class RedisData(AttributeRedis):
-    pass
 
 class Sider(wx.Frame):
     def __init__(self, parent, id, title):

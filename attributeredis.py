@@ -77,7 +77,7 @@ if __name__ == "__main__":
     t = Test()
     t.fugafuga = [i for i in range(10)]
     print t.fugafuga
-    t.aaaa = "1"
+    t.aaaa = (1,2,4)
     print t.aaaa
     t.bbbb = 12
     print t.bbbb

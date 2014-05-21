@@ -2,6 +2,9 @@
 import wx
 
 class RedisDataGrid(wx.grid.Grid):
+    KEY_COL = 0
+    DATA_TYPE_COL = 1
+    VALUE_COL = 2
 
     def __init__(self, parent, id):
         wx.grid.Grid.__init__(self, parent, id, size=(1000, 500))
@@ -19,9 +22,24 @@ class RedisDataGrid(wx.grid.Grid):
         self.SetColSize(2, 350)
         
         #ラベルの設定
-        self.SetCellValue(0, 0, "Key")
-        self.SetCellValue(0, 1, "Data Type")
-        self.SetCellValue(0, 2, "Value")
+        self.SetCellValue(0, self.KEY_COL, "Key")
+        self.SetCellValue(0, self.DATA_TYPE_COL, "Data Type")
+        self.SetCellValue(0, self.VALUE_COL, "Value")
+
+        self._bind()
+    
+    def _bind(self):
+        self.Bind(wx.grid.EVT_GRID_CELL_CHANGE, self._onCellCange)
+
+    def _onCellCange(self, evt):
+        row = evt.GetRow()
+        col = evt.GetCol()
+
+        #TODO KEYが変更されたときの仕様
+        value = self.GetCellValue(row, col)
+        key = self.GetCellValue(row, self.KEY_COL)
+
+        setattr(self._redis, key, value)
 
     def generate_redis_data_grid(self, redis, callback=None):
         self._redis = redis
