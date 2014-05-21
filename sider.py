@@ -55,6 +55,13 @@ class RedisDataGrid(wx.grid.Grid):
         self.CreateGrid(2,3)
         self.SetColLabelSize(0)
         self.SetRowLabelSize(0)
+        
+        #セルの横幅を指定
+        self.SetColSize(0, 350)
+        self.SetColSize(1, 350)
+        self.SetColSize(2, 350)
+        
+        #ラベルの設定
         self.SetCellValue(0, 0, "Key")
         self.SetCellValue(0, 1, "Data Type")
         self.SetCellValue(0, 2, "Value")
@@ -106,7 +113,9 @@ class Sider(wx.Frame):
         self._redis = None
 
         panel = wx.Panel(self, -1)
+        #Redisへの接続用パーツなど
         self.settings_panel = SettingsPanel(panel, -1)
+        #Redisのデータを表示するパネル
         self.redis_data_panel = RedisDataPanel(panel, -1)
 
         layout = wx.BoxSizer(wx.VERTICAL)
