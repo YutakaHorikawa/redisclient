@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#import re
 import wx
 
 class RedisDataGrid(wx.grid.Grid):
@@ -38,6 +39,8 @@ class RedisDataGrid(wx.grid.Grid):
         #TODO KEYが変更されたときの仕様
         value = self.GetCellValue(row, col)
         key = self.GetCellValue(row, self.KEY_COL)
+
+        #list_match = re.compile('^\[[^\[|\]]*]$')
 
         setattr(self._redis, key, value)
 
