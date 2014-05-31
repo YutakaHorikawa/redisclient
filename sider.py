@@ -28,6 +28,9 @@ class Sider(wx.Frame):
     def set_redis_connection(self, redis):
         self._redis = redis
 
+    def get_redis_connection(self):
+        return self.redis_data_panel.get_redis()
+
 app = wx.App()
 Sider(None, -1, 'Sider')
 app.MainLoop()

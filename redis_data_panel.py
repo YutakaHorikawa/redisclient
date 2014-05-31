@@ -72,6 +72,9 @@ class RedisDataGrid(wx.grid.Grid):
     def clear_data(self):
         self.ClearGrid()
 
+    def get_redis(self):
+        return self._redis
+
 class RedisDataPanel(wx.Panel):
     def __init__(self, parent, id):
         self._parent = parent
@@ -84,4 +87,7 @@ class RedisDataPanel(wx.Panel):
     def generate_redis_data_grid(self, redis):
         self._parent.GetParent().settings_panel.update_lock_flag(True)
         self._rgrid.generate_redis_data_grid(redis, lambda: self._parent.GetParent().settings_panel.update_lock_flag(False))
+
+    def get_redis(self):
+        return self._rgrid.get_redis
 

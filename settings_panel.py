@@ -18,10 +18,27 @@ class SettingsPanel(wx.Panel):
         self.st_port = wx.StaticText(self, -1, "Port:", pos=(210,20))
         self._port_box  = wx.TextCtrl(self, wx.ID_ANY, '6379', pos=(245, 20))
 
+        #検索用パーツ
+        self.st_host = wx.StaticText(self, -1, u"Key検索:", pos=(20,58))
+        self._search_key_box = wx.TextCtrl(self, wx.ID_ANY, '', pos=(100, 55))
+        self._search_button = wx.Button(self, -1, u'検索', (360, 55))
+
+
         self._bind()
 
     def _bind(self):
         self.Bind(wx.EVT_BUTTON, self.redis_connect, id=self._redis_connect_button.GetId())
+        self.Bind(wx.EVT_BUTTON, self.redis_connect, id=self._search_button.GetId())
+    
+    def search_by_key(self, event):
+        if not self._parent.GetParent().get_redis_connection():
+           wx.MessageBox('Redis Can Not Be Found', 'Warning')
+           return
+
+        if self._search_key_box.IsEmpty():
+           return
+
+        key = self._search_key_box.GetValue()
 
     def redis_connect(self, event):
         if self._lock:
