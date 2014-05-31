@@ -38,6 +38,9 @@ class AttributeRedis(object):
     def get_all_keys(self):
         return self._r.keys('*')
 
+    def keys(self, key):
+        return self._r.keys('%s' % key)
+
     def get_all(self, key=False):
         all_kesy = self.get_all_keys()
         data = []
