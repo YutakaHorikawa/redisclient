@@ -47,7 +47,13 @@ class RedisDataGrid(wx.grid.Grid):
     def generate_redis_data_grid(self, redis, callback=None):
         self._redis = redis
         self._data = self._redis.get_all(key=True)
+        self._clear_grid(1)
+        self._generate_redis_data_grid()
 
+        if callback:
+            callback()
+
+    def _generate_redis_data_grid(self):
         for redis_data in self._data:
             key = redis_data[0]
             value = redis_data[1]
@@ -63,11 +69,29 @@ class RedisDataGrid(wx.grid.Grid):
                 self._update_last_line()
                 self.AppendRows(self._last_line)
 
-        if callback:
-            callback()
+    def _clear_grid(self, num=None):
+        self._update_last_line(num)
+        self.ClearGrid()
 
-    def _update_last_line(self):
-        self._last_line += 1
+    def search_key_result(self, key):
+        if not self._redis:
+            return
+
+        keys = self._redis.keys(key)
+        datas = self._redis.get_by_keys(keys)
+        grid_data = []
+        for i,data in enumerate(datas):
+            grid_data.append([keys[i], data])
+
+        self._data = grid_data
+        self._clear_grid(1)
+        self._generate_redis_data_grid()
+
+    def _update_last_line(self, num=None):
+        if num:
+            self._last_line = num
+        else:
+            self._last_line += 1
 
     def clear_data(self):
         self.ClearGrid()
@@ -87,6 +111,9 @@ class RedisDataPanel(wx.Panel):
     def generate_redis_data_grid(self, redis):
         self._parent.GetParent().settings_panel.update_lock_flag(True)
         self._rgrid.generate_redis_data_grid(redis, lambda: self._parent.GetParent().settings_panel.update_lock_flag(False))
+
+    def search_key_result(self, key):
+        self._rgrid.search_key_result(key)
 
     def get_redis(self):
         return self._rgrid.get_redis

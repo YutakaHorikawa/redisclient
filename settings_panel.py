@@ -28,9 +28,9 @@ class SettingsPanel(wx.Panel):
 
     def _bind(self):
         self.Bind(wx.EVT_BUTTON, self.redis_connect, id=self._redis_connect_button.GetId())
-        self.Bind(wx.EVT_BUTTON, self.redis_connect, id=self._search_button.GetId())
+        self.Bind(wx.EVT_BUTTON, self.search_key, id=self._search_button.GetId())
     
-    def search_by_key(self, event):
+    def search_key(self, event):
         if not self._parent.GetParent().get_redis_connection():
            wx.MessageBox('Redis Can Not Be Found', 'Warning')
            return
@@ -39,6 +39,7 @@ class SettingsPanel(wx.Panel):
            return
 
         key = self._search_key_box.GetValue()
+        self._parent.GetParent().redis_data_panel.search_key_result(key)
 
     def redis_connect(self, event):
         if self._lock:
