@@ -41,6 +41,17 @@ class AttributeRedis(object):
     def keys(self, key):
         return self._r.keys('%s' % key)
 
+    def get_by_keys(self, keys, force_key=False):
+        if not keys:
+            return []
+        
+        data = []
+        for k in keys:
+            value = self._get(k, force_key) 
+            data.append(value)
+
+        return data
+
     def get_all(self, key=False):
         all_kesy = self.get_all_keys()
         data = []
