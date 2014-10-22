@@ -54,7 +54,12 @@ class SettingsPanel(wx.Panel):
         port_number = self._port_box.GetValue()
         host_name = self._host_name_box.GetValue()
 
-        redis = RedisData(host_name, int(port_number), class_name=False)
+        try:
+            redis = RedisData(host_name, int(port_number), class_name=False)
+        except:
+            wx.MessageBox('Could not connect Redis Server', 'Error')
+            return
+
         #TODO 親にインスタンスを投げて、親からredisパネルに渡すようにする
         self._parent.GetParent().redis_data_panel.generate_redis_data_grid(redis)
 
