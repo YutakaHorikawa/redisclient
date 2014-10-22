@@ -29,8 +29,31 @@ class RedisDataGrid(wx.grid.Grid):
 
         self._bind()
     
-    def _bind(self):
+    def _bind(self):        
+        # セルの内容を変更
         self.Bind(wx.grid.EVT_GRID_CELL_CHANGE, self._onCellCange)
+        
+        # 右クリックでメニュー表示
+        self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self._on_right_up)
+        self.Bind(wx.EVT_RIGHT_UP, self._on_right_up)
+    
+    def _on_right_up(self, evt):
+        """
+        右クリックメニュー
+        """
+
+        if not hasattr(self, "popup_id1"):
+            self.popup_id1 = wx.NewId()
+            self.Bind(wx.EVT_MENU, self._delete_data, id=self.popupID1)
+        
+        menu = wx.Menu()
+        menu.Append(self.popup_id1, u"削除")
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def _delete_data(self, evt):
+        print "delete event"
+        pass
 
     def _onCellCange(self, evt):
         row = evt.GetRow()
